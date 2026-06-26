@@ -1,7 +1,7 @@
 {
   "name": "InvestTrack Pro",
   "short_name": "InvestTrack",
-  "start_url": "InvestTrack.html",
+  "start_url": "InvestTrack",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#1a73e8",
