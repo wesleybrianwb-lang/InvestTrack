@@ -35,11 +35,20 @@
             --category-bg: #292a2d; --summary-bg: #1e2836;
         }
 
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.3s, color 0.3s; }
-        #app { display: flex; flex-direction: column; min-height: 100vh; }
+        /* TRAVANDO O SCROLL DA PÁGINA INTEIRA */
+        html, body {
+            height: 100%;
+            height: 100dvh; /* Suporte para navegadores mobile modernos */
+            margin: 0;
+            overflow: hidden; /* Impede a tela inteira de rolar, fixando o header */
+        }
+
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.3s, color 0.3s; }
         
-        /* HEADER E STATUS NUVEM */
-        header { background-color: var(--surface-color); padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); z-index: 100; transition: background-color 0.3s; }
+        #app { display: flex; flex-direction: column; height: 100%; }
+        
+        /* HEADER FIXO */
+        header { flex-shrink: 0; background-color: var(--surface-color); padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); z-index: 100; transition: background-color 0.3s; }
         .header-title { font-size: 1.2rem; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 10px; }
         .menu-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin-right: 10px; }
         .cloud-status { font-size: 0.8rem; font-weight: normal; padding: 4px 8px; border-radius: 12px; background: var(--summary-bg); color: var(--primary); }
@@ -66,7 +75,7 @@
         .sidebar-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
         
         @media (max-width: 768px) {
-            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); }
+            .sidebar { position: absolute; top: 0; bottom: 0; left: 0; height: 100%; transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .sidebar-overlay.open { display: block; }
         }
@@ -108,7 +117,7 @@
         .delete-btn { opacity: 0; transition: opacity 0.2s; color: var(--text-muted); font-size: 1rem; padding: 0 2px;}
         .list-item:hover .delete-btn { opacity: 1; }
         .delete-btn:hover { color: var(--danger); }
-        @media (max-width: 768px) { .delete-btn { opacity: 1; } } /* Visível no mobile por padrão */
+        @media (max-width: 768px) { .delete-btn { opacity: 1; } }
         
         .toggle-icon { display: inline-block; width: 20px; font-size: 0.7rem; color: var(--primary); }
 
@@ -157,7 +166,7 @@
         <header>
             <div class="header-title">
                 <button class="menu-btn" @click="isSidebarOpen = !isSidebarOpen">☰</button>
-                📊 InvestTrack Pro
+                📊 InvestTrack
                 <span class="cloud-status" :class="{saving: syncStatus.includes('Salvando')}">
                     {{ syncStatus }}
                 </span>
@@ -169,8 +178,10 @@
         </header>
 
         <div class="container">
+            <!-- Overlay escuro atrás da barra lateral no celular -->
             <div class="sidebar-overlay" :class="{open: isSidebarOpen}" @click="isSidebarOpen = false"></div>
             
+            <!-- Sidebar -->
             <div class="sidebar" :class="{open: isSidebarOpen}">
                 <button class="btn btn-primary" style="width: 100%; margin-bottom: 20px;" @click="createNewYear">
                     + Novo Calendário Anual
@@ -241,6 +252,7 @@
                     </div>
                 </div>
                 
+                <!-- Toggle Tema Escuro -->
                 <div class="theme-toggle">
                     <span>Modo Escuro</span>
                     <button class="btn" @click="toggleTheme" style="padding: 4px 10px; font-size: 1rem;">
@@ -249,6 +261,7 @@
                 </div>
             </div>
 
+            <!-- Main Content -->
             <div class="main-content">
                 <div v-if="appData.years.length === 0" style="text-align: center; margin-top: 100px; color: var(--text-muted);">
                     <div style="font-size: 4rem;">☁️</div>
@@ -256,11 +269,13 @@
                     <p>Para começar, crie um novo calendário anual no menu lateral.</p>
                 </div>
 
+                <!-- Visão Geral -->
                 <div v-if="currentView === 'overview' && currentYear">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                         <h2 style="margin: 0;">Resumo de {{ currentYear.year }}</h2>
                     </div>
 
+                    <!-- Painel de Balanço -->
                     <div v-if="selectedForAnalysis.length > 0" class="summary-card" style="display: flex; flex-direction: column; align-items: flex-start;">
                         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 15px;">
                             <h3 style="margin: 0; color: var(--primary);">Balanço dos Selecionados ({{ selectedForAnalysis.length }})</h3>
@@ -324,6 +339,7 @@
                     </div>
                 </div>
 
+                <!-- Visão Individual -->
                 <div v-if="currentView === 'investment' && currentInvestment">
                     <div class="card">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -361,6 +377,7 @@
                     </div>
                 </div>
 
+                <!-- Gráfico -->
                 <div v-if="currentView === 'chart' && currentYear">
                     <div class="card">
                         <h2>Análise Comparativa de Saldo</h2>
@@ -432,7 +449,6 @@
                 saveTimeout: null,
                 isDataLoaded: false, 
 
-                // Novos controles visuais
                 isSidebarOpen: window.innerWidth > 768,
                 isDarkMode: localStorage.getItem('theme') === 'dark',
 
@@ -496,7 +512,6 @@
             isDarkMode(newVal) {
                 document.documentElement.setAttribute('data-theme', newVal ? 'dark' : 'light');
                 localStorage.setItem('theme', newVal ? 'dark' : 'light');
-                // Re-renderiza o gráfico para adaptar as cores dos eixos
                 if(this.currentView === 'chart') {
                     this.$nextTick(() => this.renderChart());
                 }
@@ -506,12 +521,12 @@
             // Aplica tema inicial
             if(this.isDarkMode) document.documentElement.setAttribute('data-theme', 'dark');
 
-            // Ajusta barra lateral se redimensionar a tela
+            // Correção do Bug de Rolagem: O menu só ajusta se a largura real da tela for alterada (ex: virar o celular de lado)
+            let currentWidth = window.innerWidth;
             window.addEventListener('resize', () => {
-                if(window.innerWidth > 768) {
-                    this.isSidebarOpen = true;
-                } else {
-                    this.isSidebarOpen = false;
+                if(window.innerWidth !== currentWidth) {
+                    this.isSidebarOpen = window.innerWidth > 768;
+                    currentWidth = window.innerWidth;
                 }
             });
 
@@ -534,7 +549,6 @@
                 this.isDarkMode = !this.isDarkMode;
             },
 
-            // Fecha menu no mobile ao clicar em um link
             switchView(viewName) {
                 this.currentView = viewName;
                 if(window.innerWidth <= 768) this.isSidebarOpen = false;
@@ -775,7 +789,6 @@
                     if (!canvas) return;
                     if (this.chartInstance) this.chartInstance.destroy();
 
-                    // Ajuste de cores para o gráfico baseadas no tema atual
                     const gridColor = this.isDarkMode ? '#3c4043' : '#dadce0';
                     const fontColor = this.isDarkMode ? '#9aa0a6' : '#5f6368';
 
