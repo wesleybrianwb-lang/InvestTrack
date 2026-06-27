@@ -8,11 +8,14 @@
   }
 </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>InvestTrack Cloud Pro</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* REGRA UNIVERSAL DE CAIXA PARA CORRIGIR O CORTE NO CELULAR */
+        * { box-sizing: border-box; }
+
         /* VARIÁVEIS DE TEMA (CLARO) */
         :root {
             --bg-color: #f8f9fa; --surface-color: #ffffff;
@@ -66,12 +69,13 @@
         /* TELAS DE AVISO E LOGIN */
         .auth-screen { flex: 1; display: flex; justify-content: center; align-items: center; background-color: var(--bg-color); }
         .auth-card { background: var(--surface-color); padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; }
-        .auth-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; box-sizing: border-box; background-color: var(--input-bg); color: var(--text-main); }
+        .auth-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background-color: var(--input-bg); color: var(--text-main); }
         
         /* LAYOUT PRINCIPAL E BARRA LATERAL RESPONSIVA */
         .container { display: flex; flex: 1; overflow: hidden; position: relative; }
         
-        .sidebar { width: 300px; background-color: var(--surface-color); border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; transition: transform 0.3s ease; display: flex; flex-direction: column; z-index: 1001; }
+        /* Adicionado padding extra no final (30px) para afastar o botão do limite da tela */
+        .sidebar { width: 300px; background-color: var(--surface-color); border-right: 1px solid var(--border); padding: 20px 20px 30px 20px; overflow-y: auto; transition: transform 0.3s ease; display: flex; flex-direction: column; z-index: 1001; }
         .sidebar-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; }
         
         @media (max-width: 768px) {
@@ -80,7 +84,7 @@
             .sidebar-overlay.open { display: block; }
         }
 
-        .main-content { flex: 1; padding: 25px; overflow-y: auto; background-color: var(--bg-color); }
+        .main-content { flex: 1; padding: 25px; padding-bottom: 80px; overflow-y: auto; background-color: var(--bg-color); }
         .section-title { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 20px 0 10px 0; letter-spacing: 0.5px; }
 
         /* LISTAS E CARDS */
@@ -121,7 +125,8 @@
         
         .toggle-icon { display: inline-block; width: 20px; font-size: 0.7rem; color: var(--primary); }
 
-        .theme-toggle { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+        /* MODIFICADO: Adicionado padding superior maior e removido margens negativas */
+        .theme-toggle { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
         
         [v-cloak] { display: none; }
 
@@ -252,7 +257,7 @@
                     </div>
                 </div>
                 
-                <!-- Toggle Tema Escuro -->
+                <!-- Toggle Tema Escuro agora renderiza acima da barra inferior nativa -->
                 <div class="theme-toggle">
                     <span>Modo Escuro</span>
                     <button class="btn" @click="toggleTheme" style="padding: 4px 10px; font-size: 1rem;">
@@ -518,10 +523,8 @@
             }
         },
         mounted() {
-            // Aplica tema inicial
             if(this.isDarkMode) document.documentElement.setAttribute('data-theme', 'dark');
 
-            // Correção do Bug de Rolagem: O menu só ajusta se a largura real da tela for alterada (ex: virar o celular de lado)
             let currentWidth = window.innerWidth;
             window.addEventListener('resize', () => {
                 if(window.innerWidth !== currentWidth) {
