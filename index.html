@@ -9,7 +9,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>InvestTrack Cloud Pro</title>
+    <title>Cash Invest Pro</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -112,7 +112,7 @@
 
     <div class="auth-screen" v-else-if="isFirebaseConfigured && !user && !isCheckingAuth">
         <div class="auth-card">
-            <h2 style="color: var(--primary); margin-top: 0;">📊 InvestTrack Cloud</h2>
+            <h2 style="color: var(--primary); margin-top: 0;">📊 Cash Invest Pro</h2>
             <p style="color: var(--text-muted); margin-bottom: 25px;">Sincronização em nuvem ativa</p>
             <form @submit.prevent="handleAuth">
                 <input type="email" class="auth-input" v-model="authEmail" placeholder="Seu e-mail" required>
@@ -134,7 +134,7 @@
         <header>
             <div class="header-title">
                 <button class="menu-btn" @click="isSidebarOpen = !isSidebarOpen">☰</button>
-                📊 InvestTrack
+                📊 Cash Invest Pro
                 <span class="cloud-status" :class="{saving: syncStatus.includes('Salvando')}">
                     {{ syncStatus }}
                 </span>
